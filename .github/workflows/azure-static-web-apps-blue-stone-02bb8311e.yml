@@ -20,8 +20,8 @@ jobs:
           submodules: true
           lfs: false
 
-      # 🔧 NEW: Install dependencies and build manually
       - name: Install and Build
+        working-directory: employee-frontend
         run: |
           npm install
           npm run build
@@ -33,10 +33,10 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLUE_STONE_02BB8311E }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"
-          api_location: ""
-          output_location: "dist"
-          
+          app_location: "employee-frontend"   # 👈 point to your frontend folder
+          api_location: ""                    # no backend API in this repo
+          output_location: "dist"             # built files folder
+
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
