@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
@@ -8,7 +9,7 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 
-// Get all employees
+// GET all employees
 app.get('/employees', async (req, res) => {
   try {
     const employees = await prisma.employees.findMany();
@@ -18,22 +19,26 @@ app.get('/employees', async (req, res) => {
   }
 });
 
-// Add a new employee
+// POST new employee
 app.post('/employees', async (req, res) => {
-  const { first_name, last_name, email, birthdate, salary } = req.body;
+  const { firstName, lastName, address, city, state, zip, email, salary } = req.body;
 
   try {
     const newEmployee = await prisma.employees.create({
       data: {
-        first_name,
-        last_name,
+        firstName,
+        lastName,
+        address,
+        city,
+        state,
+        zip,
         email,
-        birthdate: birthdate ? new Date(birthdate) : null,
-        salary: salary ? parseFloat(salary) : null
+        salary: salary ? parseFloat(salary) : null,
       },
     });
     res.json(newEmployee);
   } catch (error) {
+    console.error('Error creating employee:', error);
     res.status(500).json({ error: error.message });
   }
 });

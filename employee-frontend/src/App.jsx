@@ -4,38 +4,53 @@ import axios from 'axios';
 function App() {
   const [employees, setEmployees] = useState([]);
   const [form, setForm] = useState({
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
     email: '',
-    birthdate: '',
     salary: ''
   });
 
+  // Fetch employees
   useEffect(() => {
     async function fetchEmployees() {
       try {
         const res = await axios.get('http://localhost:4000/employees');
         setEmployees(res.data);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching employees:', err);
       }
     }
     fetchEmployees();
   }, []);
 
-  const handleChange = e => {
+  // Handle form input
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  // Add new employee
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:4000/employees', form);
       const res = await axios.get('http://localhost:4000/employees');
       setEmployees(res.data);
-      setForm({ first_name: '', last_name: '', email: '', birthdate: '', salary: '' });
+      setForm({
+        firstName: '',
+        lastName: '',
+        address: '',
+        city: '',
+        state: '',
+        zip: '',
+        email: '',
+        salary: ''
+      });
     } catch (err) {
-      console.error(err);
+      console.error('Error adding employee:', err);
     }
   };
 
@@ -44,29 +59,50 @@ function App() {
       <h1>Employees</h1>
 
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input name="first_name" value={form.first_name} onChange={handleChange} placeholder="First Name" />
-        <input name="last_name" value={form.last_name} onChange={handleChange} placeholder="Last Name" />
+        <input name="firstName" value={form.firstName} onChange={handleChange} placeholder="First Name" />
+        <input name="lastName" value={form.lastName} onChange={handleChange} placeholder="Last Name" />
+        <input name="address" value={form.address} onChange={handleChange} placeholder="Address" />
+        <input name="city" value={form.city} onChange={handleChange} placeholder="City" />
+        <input name="state" value={form.state} onChange={handleChange} placeholder="State" />
+        <input name="zip" value={form.zip} onChange={handleChange} placeholder="ZIP" />
         <input name="email" value={form.email} onChange={handleChange} placeholder="Email" />
-        <input name="birthdate" type="date" value={form.birthdate} onChange={handleChange} placeholder="Birthdate" />
-        <input name="salary" type="number" step="0.01" value={form.salary} onChange={handleChange} placeholder="Salary" />
+        <input
+          name="salary"
+          type="number"
+          step="0.01"
+          value={form.salary}
+          onChange={handleChange}
+          placeholder="Salary"
+        />
         <button type="submit">Add Employee</button>
       </form>
 
       <table border="1" cellPadding="8">
         <thead>
           <tr>
-            <th>ID</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Birthdate</th><th>Salary</th>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>ZIP</th>
+            <th>Email</th>
+            <th>Salary</th>
           </tr>
         </thead>
         <tbody>
-          {employees.map(emp => (
+          {employees.map((emp) => (
             <tr key={emp.id}>
-              <td>{emp.employee_id}</td>
-              <td>{emp.first_name || '-'}</td>
-              <td>{emp.last_name || '-'}</td>
+              <td>{emp.id}</td>
+              <td>{emp.firstName || '-'}</td>
+              <td>{emp.lastName || '-'}</td>
+              <td>{emp.address || '-'}</td>
+              <td>{emp.city || '-'}</td>
+              <td>{emp.state || '-'}</td>
+              <td>{emp.zip || '-'}</td>
               <td>{emp.email || '-'}</td>
-              <td>{emp.birthdate ? new Date(emp.birthdate).toLocaleDateString() : '-'}</td>
-              <td>{emp.salary ? Number(emp.salary).toFixed(2) : '-'}</td>
+              <td>{emp.salary ? parseFloat(emp.salary).toFixed(2) : '-'}</td>
             </tr>
           ))}
         </tbody>
